@@ -19,7 +19,7 @@ export const createExcuse = async (content) => {
 };
 
 // Fonction pour récupérer une excuse aléatoire depuis la base de données
-async function getRandomExcuse() {
+export const getRandomExcuse = async () => {
   // Exécutez une requête SQL pour sélectionner une excuse aléatoire
   const result = await db.query(
     "SELECT * FROM excuses ORDER BY RAND() LIMIT 1"
@@ -30,7 +30,7 @@ async function getRandomExcuse() {
 
   // Retournez l'excuse aléatoire
   return randomExcuse;
-}
+};
 
 /* export const getRandomExcuses = async () => {
   const [articles] = await db.query("SELECT * FROM quotes");
