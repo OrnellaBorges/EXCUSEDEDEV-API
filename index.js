@@ -1,11 +1,16 @@
 import express from "express";
 import db from "./database.js";
-import { getAllExcuses } from "./models/excusesModels.js";
+import {
+  getAllExcuses,
+  createExcuse,
+  getRandomExcuse,
+} from "./models/excusesModels.js";
 
 const app = express();
 
 // MIDDLEWARE
-app.use(express.json()); // tres important ! permet de convertir les donneés à envoyer au format json a la bdd
+app.use(express.json());
+// tres important ! permet de convertir les donneés à envoyer au format json a la bdd
 
 // app est l'intance d'express on a tout mis express dans la variable app
 //console.log(app.listen); //app.listen permet de creer le server si on regarde ce qu'il y a dedans on va trouver toutes les fonctions native lié a express
@@ -13,22 +18,21 @@ app.use(express.json()); // tres important ! permet de convertir les donneés à
 // branchement à la base de données on a besoin d'une librairie en plus in faut installer
 
 //ROUTES
-
-// route qui recup tous les articles
-app.get("/api/excuse", async (req, res, next) => {
-  // on met async devant les arguments pour dire attention cette partie de la fonction est asynchrone
+// route qui recup toutes les excuses
+app.get("/api/excuses", async (req, res, next) => {
+  // on met async devant la fonction anonyme pour dire attention cette partie de la fonction est asynchrone
   try {
-    const articles = await getAllExcuses();
-    res.status(200).json(articles); // permet d'envoyer au front les données
+    const excuses = await getAllExcuses();
+    res.status(200).json(excuses); // permet d'envoyer au front les données
   } catch (error) {
     next(error);
   }
 });
 
-// route pour recup 1 article
-app.get("/api/quotes/:id/", async (req, res, next) => {
+// route pour recup 1 excuse
+app.get("/api/excuses/:id", async (req, res, next) => {
   // req res next sont des objets les : sont des variables
-  let [article] = await db.query("SELECT * FROM articles WHERE id = ?", [
+  let [excuse] = await db.query("SELECT * FROM excuses WHERE id = ?", [
     req.params.id,
   ]);
 
@@ -37,31 +41,49 @@ app.get("/api/quotes/:id/", async (req, res, next) => {
 
   console.log(req.params.id);
 
-  res.send(article[0]);
+  res.send(excuse[0]);
   // permet d'envoyer au front les données d'un seul article en l'occurence le deuxième element parmis les articles
 });
 
 //Creation ou sauvegarde d'une excuse
-app.post("/api/articles/create", async (req, res, next) => {
+app.post("/api/excuses/create", async (req, res, next) => {
   const { content } = req.body;
   try {
-    let newExcuse = await db.query("INSERT INTO excuse(content) VALUES(?)", [
-      content,
-    ]);
-    res.status(200).json("RAS les copains! l'article est bien créé.");
+    const success = await createExcuse(content);
+    if (success) {
+      res.status(201).json({ message: "L'excuse a été créée avec succès." });
+    } else {
+      // La fonction createExcuse ne devrait jamais renvoyer false, mais vous pouvez gérer cela ici si nécessaire
+      res.status(500).json({
+        error: "Une erreur s'est produite lors de la création de l'excuse.",
+      });
+    }
   } catch (error) {
-    next(error); // permet de recuperer le middleware créé a la fin c'est un racourcis pour ne pas tout ecrire
+    next(error);
+  }
+});
+
+// OBTENIR UNE EXCUSE ALEATOIRE
+app.get("/api/excuses/random", async (req, res, next) => {
+  try {
+    // Récupérer une excuse aléatoire depuis la base de données
+    const randomExcuse = await getRandomExcuse();
+
+    // Envoyer l'excuse aléatoire comme réponse
+    res.status(200).json(randomExcuse);
+  } catch (error) {
+    next(error);
   }
 });
 
 // SUPPRIMER UN ARTICLE
 app.delete("/api/articles/delete/:id", async (req, res, next) => {
   try {
-    const [article] = await db.query("SELECT * FROM articles WHERE id = ?", [
+    const [excuse] = await db.query("SELECT * FROM excuses WHERE id = ?", [
       req.params.id,
     ]);
     if (article[0]) {
-      let deleteArticle = await db.query("DELETE FROM articles WHERE id = ?", [
+      let deleteExcuse = await db.query("DELETE FROM excuses WHERE id = ?", [
         req.params.id,
       ]);
       res.status(200).json("L'article à bien été supprimé");
@@ -87,9 +109,9 @@ app.delete("/api/articles/delete/:id", async (req, res, next) => {
 app.put("/api/articles/update/:id", async (req, res, next) => {
   const { title, content } = req.body;
   try {
-    let updateArticle = db.query(
-      "UPDATE articles SET title = ?, content = ?, updatedAt = NOW() WHERE id = ?",
-      [title, content, req.params.id]
+    let updateExcuse = db.query(
+      "UPDATE articles SET content = ?, updatedAt = NOW() WHERE id = ?",
+      [content, req.params.id]
     );
     res.status(200).json("L'article est modifié");
   } catch (error) {
