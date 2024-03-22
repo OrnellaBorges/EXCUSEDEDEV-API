@@ -2,8 +2,8 @@ import express from "express";
 import db from "./database.js";
 import {
   getAllExcuses,
-  createExcuse,
   getRandomExcuse,
+  createExcuse,
 } from "./models/excusesModels.js";
 
 const app = express();
@@ -25,11 +25,12 @@ app.get("/api/excuses", async (req, res, next) => {
     const excuses = await getAllExcuses();
     res.status(200).json(excuses); // permet d'envoyer au front les données
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });
 
-// route pour recup 1 excuse
+// route pour recup 1 excuse par l'id
 app.get("/api/excuses/:id", async (req, res, next) => {
   // req res next sont des objets les : sont des variables
   let [excuse] = await db.query("SELECT * FROM excuses WHERE id = ?", [
@@ -49,7 +50,9 @@ app.get("/api/excuses/:id", async (req, res, next) => {
 app.post("/api/excuses/create", async (req, res, next) => {
   const { content } = req.body;
   try {
+    console.log("je suis la ");
     const success = await createExcuse(content);
+    console.log("success", success);
     if (success) {
       res.status(201).json({ message: "L'excuse a été créée avec succès." });
     } else {
@@ -59,16 +62,19 @@ app.post("/api/excuses/create", async (req, res, next) => {
       });
     }
   } catch (error) {
+    console.log("je suis dans catch");
+    console.log(error);
     next(error);
   }
 });
 
 // OBTENIR UNE EXCUSE ALEATOIRE
-app.get("/api/excuses/random", async (req, res, next) => {
+app.get("/api/excuses/getrandom", async (req, res, next) => {
   try {
+    console.log("je suis la ");
     // Récupérer une excuse aléatoire depuis la base de données
     const randomExcuse = await getRandomExcuse();
-
+    console.log(randomExcuse);
     // Envoyer l'excuse aléatoire comme réponse
     res.status(200).json(randomExcuse);
   } catch (error) {
@@ -76,7 +82,7 @@ app.get("/api/excuses/random", async (req, res, next) => {
   }
 });
 
-// SUPPRIMER UN ARTICLE
+/* // SUPPRIMER UNE EXCUSE
 app.delete("/api/articles/delete/:id", async (req, res, next) => {
   try {
     const [excuse] = await db.query("SELECT * FROM excuses WHERE id = ?", [
@@ -89,23 +95,22 @@ app.delete("/api/articles/delete/:id", async (req, res, next) => {
       res.status(200).json("L'article à bien été supprimé");
     } else {
       res.status(404).json("Cet article n'existe pas");
-    }
+    } */
 
-    //Méthode plus actuelle et qui consomme moins de lignes
+//Méthode plus actuelle et qui consomme moins de lignes
 
-    /* const [article] = await db.query("SELECT * FROM articles WHERE id = ?", [req.params.id]); // il interroge la bdd si il existe ou pas
+/* const [article] = await db.query("SELECT * FROM articles WHERE id = ?", [req.params.id]); // il interroge la bdd si il existe ou pas
         if(!article[0]) return res.status(404).json("Cet article n'existe pas"); 
         
         // si il existe pas on envoi un message 
         let deleteArticle = await db.query("DELETE FROM articles WHERE id = ?", [req.params.id])
-        res.status(200).json("L'article à bien été supprimé") */
+        res.status(200).json("L'article à bien été supprimé") 
   } catch (error) {
     next(error);
   }
-});
+});*/
 
 // MODIFIER UN ARTICLE = mise a jour
-
 app.put("/api/articles/update/:id", async (req, res, next) => {
   const { title, content } = req.body;
   try {
@@ -125,7 +130,7 @@ app.use((err, req, res, next) => {
 });
 
 //NB : ce port que j'ai créé => branché sur notre appli
-const port = 7777;
+const port = 5000;
 app.listen(port, () => {
   console.log(`le server ecoute sur le port ${port}`);
 });
