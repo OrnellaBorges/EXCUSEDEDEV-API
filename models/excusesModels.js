@@ -22,7 +22,7 @@ export const createExcuse = async (content) => {
 export const getRandomExcuse = async () => {
   // Exécutez une requête SQL pour sélectionner une excuse aléatoire
   const result = await db.query(
-    "SELECT * FROM excuses ORDER BY RAND() LIMIT 1"
+    "SELECT * FROM excuses ORDER BY RAND() LIMIT 10"
   );
 
   // Récupérez l'excuse aléatoire à partir du résultat de la requête
