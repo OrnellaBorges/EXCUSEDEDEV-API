@@ -18,6 +18,19 @@ app.use(express.json());
 // branchement à la base de données on a besoin d'une librairie en plus in faut installer
 
 //ROUTES
+app.get("/api/excuses/random", async (req, res, next) => {
+  try {
+    console.log("je suis la ");
+    // Récupérer une excuse aléatoire depuis la base de données
+    const randomExcuse = await getRandomExcuse();
+    console.log(randomExcuse);
+    // Envoyer l'excuse aléatoire comme réponse
+    res.status(200).json(randomExcuse);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // route qui recup toutes les excuses
 app.get("/api/excuses", async (req, res, next) => {
   // on met async devant la fonction anonyme pour dire attention cette partie de la fonction est asynchrone
@@ -50,7 +63,9 @@ app.get("/api/excuses/:id", async (req, res, next) => {
 app.post("/api/excuses/create", async (req, res, next) => {
   const { content } = req.body;
   try {
-    console.log("je suis la ");
+    const success = await createExcuse(content);
+    console.log("success", success);
+    /* console.log("je suis la ");
     const success = await createExcuse(content);
     console.log("success", success);
     if (success) {
@@ -60,7 +75,7 @@ app.post("/api/excuses/create", async (req, res, next) => {
       res.status(500).json({
         error: "Une erreur s'est produite lors de la création de l'excuse.",
       });
-    }
+    } */
   } catch (error) {
     console.log("je suis dans catch");
     console.log(error);
@@ -69,18 +84,7 @@ app.post("/api/excuses/create", async (req, res, next) => {
 });
 
 // OBTENIR UNE EXCUSE ALEATOIRE
-app.get("/api/excuses/getrandom", async (req, res, next) => {
-  try {
-    console.log("je suis la ");
-    // Récupérer une excuse aléatoire depuis la base de données
-    const randomExcuse = await getRandomExcuse();
-    console.log(randomExcuse);
-    // Envoyer l'excuse aléatoire comme réponse
-    res.status(200).json(randomExcuse);
-  } catch (error) {
-    next(error);
-  }
-});
+//app.get("/api/excuses/getrandom", async (req, res, next) => {
 
 /* // SUPPRIMER UNE EXCUSE
 app.delete("/api/articles/delete/:id", async (req, res, next) => {

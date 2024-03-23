@@ -8,11 +8,11 @@ export const getAllExcuses = async () => {
 // Fonction pour récupérer une excuse aléatoire depuis la base de données
 export const getRandomExcuse = async () => {
   // Exécutez une requête SQL pour sélectionner une excuse aléatoire
-  /* const result = await db.query(
+  const result = await db.query(
     "SELECT * FROM excuses ORDER BY RAND() LIMIT 1"
-  ); */
+  );
 
-  const totalExcusesResult = await db.query(
+  /* const totalExcusesResult = await db.query(
     "SELECT COUNT(*) AS total FROM excuses"
   );
   const totalExcuses = totalExcusesResult[0].total;
@@ -31,16 +31,18 @@ export const getRandomExcuse = async () => {
   // Récupérer l'excuse aléatoire à partir du résultat de la requête
   const randomExcuse = randomExcuseQuery[0];
 
-  console.log("Excuse aléatoire récupérée :", randomExcuse);
+  console.log("Excuse aléatoire récupérée :", randomExcuse); */
 
-  return randomExcuse;
+  return result[0][0];
 };
 
 export const createExcuse = async (content) => {
   const result = await db.query("INSERT INTO excuses(content) VALUES(?)", [
     content,
   ]);
-  if (result.affectedRows === 1) {
+  console.log("result", result);
+  console.log("result[0].affectedRows", result[0].affectedRows);
+  if (result[0].affectedRows === 1) {
     return true; // Succès : l'excuse a été créée avec succès
   } else {
     throw new Error(
