@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors";
+
 import db from "./database.js";
 import {
   getAllExcuses,
@@ -17,6 +19,11 @@ app.use(express.json());
 
 // branchement à la base de données on a besoin d'une librairie en plus in faut installer
 
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Autoriser les requêtes depuis ce domaine
+  })
+);
 //ROUTES
 app.get("/api/excuses/random", async (req, res, next) => {
   try {
