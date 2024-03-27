@@ -37,12 +37,12 @@ export const getRandomExcuse = async () => {
 };
 
 export const createExcuse = async (content) => {
-  const result = await db.query("INSERT INTO excuses(content) VALUES(?)", [
+  const query = await db.query("INSERT INTO excuses(content) VALUES(?)", [
     content,
   ]);
-  console.log("result", result);
-  console.log("result[0].affectedRows", result[0].affectedRows);
-  if (result[0].affectedRows === 1) {
+  console.log("result", query);
+  console.log("result[0].affectedRows", query[0].affectedRows);
+  if (query[0].affectedRows === 1) {
     return true; // Succès : l'excuse a été créée avec succès
   } else {
     throw new Error(
@@ -51,6 +51,18 @@ export const createExcuse = async (content) => {
   }
 };
 
+async function addExcuse(tag, message) {
+  try {
+    await connection.execute(
+      "INSERT INTO excusesTable (tag, message) VALUES (?, ?)",
+      [tag, message]
+    );
+    return true; // Indique que l'ajout a réussi
+  } catch (error) {
+    console.error("Erreur lors de l'ajout de l'excuse :", error);
+    throw error; // Propage l'erreur pour une gestion ultérieure
+  }
+}
 /* export const getRandomExcuses = async () => {
   const [articles] = await db.query("SELECT * FROM quotes");
   return articles;
