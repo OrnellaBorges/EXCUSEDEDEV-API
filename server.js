@@ -69,20 +69,10 @@ app.get("/api/excuses/:id", async (req, res, next) => {
 //Creation ou sauvegarde d'une excuse
 app.post("/api/excuses/create", async (req, res, next) => {
   const { content } = req.body;
+  console.log(content);
   try {
     const success = await createExcuse(content);
     console.log("success", success);
-    /* console.log("je suis la ");
-    const success = await createExcuse(content);
-    console.log("success", success);
-    if (success) {
-      res.status(201).json({ message: "L'excuse a été créée avec succès." });
-    } else {
-      // La fonction createExcuse ne devrait jamais renvoyer false, mais vous pouvez gérer cela ici si nécessaire
-      res.status(500).json({
-        error: "Une erreur s'est produite lors de la création de l'excuse.",
-      });
-    } */
   } catch (error) {
     console.log("je suis dans catch");
     console.log(error);
