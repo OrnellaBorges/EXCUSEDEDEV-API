@@ -4,6 +4,7 @@ import db from "../database.js";
 export const getAllExcuses = async () => {
   try {
     const [excuses] = await db.query("SELECT * FROM excuseTable");
+    console.log(excuses);
     return excuses;
   } catch (error) {
     console.error(

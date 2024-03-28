@@ -22,8 +22,9 @@ app.use(
 //ROUTES
 
 // Route pour lister toutes les excuses
-app.get("/api/excuses", async (req, res) => {
+app.get("/api/allExcuses", async (req, res) => {
   try {
+    console.log("je try");
     const allExcuses = await getAllExcuses();
     res.json(allExcuses);
   } catch (error) {
