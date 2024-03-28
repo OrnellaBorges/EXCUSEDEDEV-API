@@ -34,7 +34,7 @@ app.get("/api/allExcuses", async (req, res) => {
   }
 });
 
-// Route pour lister toutes les excuses
+// Route pour recuperer une excuse aleatoire depuis le back
 app.get("/api/randomExcuse", async (req, res) => {
   try {
     const randomExcuse = await getRandomExcuse();
