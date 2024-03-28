@@ -1,6 +1,5 @@
 import db from "../database.js";
 
-// Fonction pour récupérer toutes les excuses depuis la base de données
 export const getAllExcuses = async () => {
   try {
     const [excuses] = await db.query("SELECT * FROM excuseTable");
@@ -15,7 +14,6 @@ export const getAllExcuses = async () => {
   }
 };
 
-// Fonction pour récupérer une excuse aléatoire depuis la base de données
 export const getRandomExcuse = async () => {
   try {
     const [randomExcuse] = await db.query(
@@ -31,13 +29,13 @@ export const getRandomExcuse = async () => {
   }
 };
 
-// Fonction pour ajouter une nouvelle excuse à la base de données
 export const addExcuse = async (tag, message) => {
   try {
     const queryResult = await db.query(
       "INSERT INTO excuseTable(tag, message) VALUES (?, ?)",
       [tag, message]
     );
+    console.log("Query result:", queryResult);
     if (queryResult[0].affectedRows === 1) {
       return true; // Succès : l'excuse a été ajoutée avec succès
     } else {

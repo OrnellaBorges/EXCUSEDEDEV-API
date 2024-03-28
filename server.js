@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-
 /* import db from "./database.js"; */
 import {
   getAllExcuses,
